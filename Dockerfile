@@ -41,4 +41,4 @@ RUN apt-get update && apt-get install -y nodejs npm && npm install && npm run bu
 EXPOSE 8000
 
 # Start script
-CMD ["sh", "-c", "touch database/database.sqlite && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "touch database/database.sqlite && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=$PORT"]
