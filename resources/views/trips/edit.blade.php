@@ -24,7 +24,7 @@
                         @csrf
                         @method('PUT')
                         @php 
-                            $isVehicle = auth()->user()->hasRole('Vehicle') || auth()->user()->hasRole('Driver'); 
+                            $isVehicle = auth()->user()->hasRole('Vehicle'); 
                         @endphp
                         
                         <div class="space-y-4">

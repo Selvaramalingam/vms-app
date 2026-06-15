@@ -14,7 +14,7 @@ class MaintenanceController extends Controller
 
         $query = Maintenance::with('vehicle')->latest();
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $vehicle = $user->vehicle;
             if (!$vehicle) {
                 return redirect()->route('dashboard')->with('error', 'No vehicle profile linked to your account.');
@@ -36,7 +36,7 @@ class MaintenanceController extends Controller
         $maintenances = $query->paginate(10)->withQueryString();
 
         $vehicles = collect();
-        if ($user->hasRole('Admin') || $user->hasRole('Staff')) {
+        if ($user->hasRole('Admin')) {
             $vehicles = Vehicle::where('status', 'active')->orderBy('vehicle_number')->get();
         } else {
             $vehicles = collect([$user->vehicle])->filter();
@@ -86,7 +86,7 @@ class MaintenanceController extends Controller
         $vehicles = collect();
         $linkedVehicle = null;
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle) {
                 return redirect()->route('dashboard')->with('error', 'No vehicle profile linked to your account.');
@@ -101,7 +101,7 @@ class MaintenanceController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-        $isVehicleUser = $user->hasRole('Vehicle') || $user->hasRole('Driver');
+        $isVehicleUser = $user->hasRole('Vehicle');
 
         if ($isVehicleUser) {
             $linkedVehicle = $user->vehicle;
@@ -150,7 +150,7 @@ class MaintenanceController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle || $maintenance->vehicle_id !== $linkedVehicle->id) {
                 return redirect()->route('maintenances.index')->with('error', 'You can only edit your own vehicle maintenance.');
@@ -167,7 +167,7 @@ class MaintenanceController extends Controller
     public function update(Request $request, Maintenance $maintenance)
     {
         $user = auth()->user();
-        $isVehicleUser = $user->hasRole('Vehicle') || $user->hasRole('Driver');
+        $isVehicleUser = $user->hasRole('Vehicle');
 
         if ($isVehicleUser) {
             $linkedVehicle = $user->vehicle;
@@ -218,7 +218,7 @@ class MaintenanceController extends Controller
     public function destroy(Maintenance $maintenance)
     {
         $user = auth()->user();
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             if ($maintenance->status === 'approved') {
                 return redirect()->route('maintenances.index')->with('error', 'Approved maintenance records cannot be deleted.');
             }

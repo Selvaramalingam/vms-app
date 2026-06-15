@@ -43,15 +43,15 @@ class LoginHistoryController extends Controller
             ->orderBy('login_datetime', 'desc')
             ->first();
 
-        // Last login for Driver
-        $lastDriverLogin = LoginHistory::with('user')
-            ->where('role', 'Driver')
+        // Last login for Vehicle
+        $lastVehicleLogin = LoginHistory::with('user')
+            ->where('role', 'Vehicle')
             ->orderBy('login_datetime', 'desc')
             ->first();
 
         return view('login-history.index', compact(
             'histories', 'tab', 'userId', 'period', 'users',
-            'lastAdminLogin', 'lastDriverLogin'
+            'lastAdminLogin', 'lastVehicleLogin'
         ));
     }
 }

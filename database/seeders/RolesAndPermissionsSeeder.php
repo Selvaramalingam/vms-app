@@ -10,7 +10,6 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         Role::firstOrCreate(['name' => 'Admin']);
-        Role::firstOrCreate(['name' => 'Staff']);
-        Role::firstOrCreate(['name' => 'Driver']);
+        Role::firstOrCreate(['name' => 'Vehicle']);
     }
 }

@@ -21,7 +21,7 @@
                     @endif
 
                     @php
-                        $isVehicle = auth()->user()->hasRole('Vehicle') || auth()->user()->hasRole('Driver');
+                        $isVehicle = auth()->user()->hasRole('Vehicle');
                     @endphp
 
                     <form action="{{ route('maintenances.update', $maintenance) }}" method="POST">

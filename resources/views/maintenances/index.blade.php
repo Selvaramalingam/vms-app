@@ -98,7 +98,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         @php
                                             $isAdmin = auth()->user()->hasRole('Admin');
-                                            $isVehicle = auth()->user()->hasRole('Vehicle') || auth()->user()->hasRole('Driver');
+                                            $isVehicle = auth()->user()->hasRole('Vehicle');
                                             $canEdit = $isAdmin || ($isVehicle && $m->status !== 'approved');
                                         @endphp
                                         

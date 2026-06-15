@@ -38,7 +38,7 @@
                 <span>Overview</span>
             </a>
 
-            @hasanyrole('Admin|Staff')
+            @hasrole('Admin')
             <div class="sidebar-section">Operations</div>
             <a href="{{ route('trips.index') }}" class="sidebar-link {{ request()->routeIs('trips.*') && !request()->routeIs('trips.my') ? 'active' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.106-1.789L9 1m0 0l6 3m-6-3v18m6-15l5.447 2.724A2 2 0 0121 8.618v9.764a2 2 0 01-1.106 1.789L15 22m0-18v18"/></svg>
@@ -61,7 +61,7 @@
             </a>
             @endrole
 
-            @hasanyrole('Admin|Staff')
+            @hasrole('Admin')
             <div class="sidebar-section">Finance</div>
             <a href="{{ route('fuel.index') }}" class="sidebar-link {{ request()->routeIs('fuel.*') ? 'active' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
@@ -103,13 +103,13 @@
             </a>
             @endrole
 
-            @hasanyrole('Vehicle|Driver')
+            @hasrole('Vehicle')
             <div class="sidebar-section">My Work</div>
             <a href="{{ route('trips.my') }}" class="sidebar-link {{ request()->routeIs('trips.my') ? 'active' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.106-1.789L9 1m0 0l6 3m-6-3v18m6-15l5.447 2.724A2 2 0 0121 8.618v9.764a2 2 0 01-1.106 1.789L15 22m0-18v18"/></svg>
                 <span>My Trips</span>
             </a>
-            @hasrole('Driver')
+            @hasrole('Vehicle')
             <a href="{{ route('trips.create') }}" class="sidebar-link {{ request()->routeIs('trips.create') ? 'active' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Add Trip</span>

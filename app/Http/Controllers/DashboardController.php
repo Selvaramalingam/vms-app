@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         // Specific Dashboard for Vehicles
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $vehicle = $user->vehicle; 
             
             if (!$vehicle) {

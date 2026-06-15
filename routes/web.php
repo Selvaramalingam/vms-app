@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Admin, Staff & Vehicle can create/manage maintenance
-    Route::middleware(['role:Admin|Staff|Vehicle|Driver'])->group(function () {
+    Route::middleware(['role:Admin|Vehicle'])->group(function () {
         Route::resource('maintenances', \App\Http\Controllers\MaintenanceController::class);
     });
 
@@ -56,24 +56,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('api/vehicles/{vehicle}/last-trip', [\App\Http\Controllers\TripController::class, 'lastTrip'])->name('api.vehicles.last-trip');
 
     // Admin, Staff & Vehicle can create trips
-    Route::middleware(['role:Admin|Staff|Vehicle|Driver'])->group(function () {
+    Route::middleware(['role:Admin|Vehicle'])->group(function () {
         Route::get('trips/create', [TripController::class, 'create'])->name('trips.create');
         Route::post('trips', [TripController::class, 'store'])->name('trips.store');
     });
 
     // Everyone (Admin, Staff, Driver, Vehicle) can edit trips
-    Route::middleware(['role:Admin|Staff|Driver|Vehicle'])->group(function () {
+    Route::middleware(['role:Admin|Vehicle'])->group(function () {
         Route::get('trips/{trip}/edit', [TripController::class, 'edit'])->name('trips.edit');
         Route::put('trips/{trip}', [TripController::class, 'update'])->name('trips.update');
     });
 
     // Driver/Vehicle can view their own trips
-    Route::middleware(['role:Driver|Vehicle'])->group(function () {
+    Route::middleware(['role:Vehicle'])->group(function () {
         Route::get('my-trips', [TripController::class, 'myTrips'])->name('trips.my');
     });
 
     // Admin & Staff
-    Route::middleware(['role:Admin|Staff'])->group(function () {
+    Route::middleware(['role:Admin'])->group(function () {
         Route::resource('trips', TripController::class)->except(['create', 'store', 'edit', 'update', 'show']);
         Route::resource('fuel', \App\Http\Controllers\FuelEntryController::class)->except(['show']);
         Route::resource('payments', \App\Http\Controllers\TripPaymentController::class)->except(['show']);

@@ -58,7 +58,7 @@ class TripController extends Controller
         $vehicles = collect();
         $drivers = \App\Models\Driver::where('status', 'active')->get();
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle) {
                 return redirect()->route('dashboard')->with('error', 'No vehicle profile linked to your account. Please contact admin.');
@@ -74,7 +74,7 @@ class TripController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle) {
                 return redirect()->route('dashboard')->with('error', 'No vehicle profile linked to your account.');
@@ -125,7 +125,7 @@ class TripController extends Controller
 
         \App\Models\ActivityLog::log('created', 'Trip', 'New trip created to ' . $trip->location);
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             return redirect()->route('trips.my')->with('success', 'Trip added successfully!');
         }
 
@@ -137,7 +137,7 @@ class TripController extends Controller
         $user = auth()->user();
 
         // Vehicle user can only edit their own vehicle's trips
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle || $trip->vehicle_id !== $linkedVehicle->id) {
                 return redirect()->route('trips.my')->with('error', 'You can only edit your own vehicle trips.');
@@ -148,7 +148,7 @@ class TripController extends Controller
         $vehicles = collect();
         $drivers = \App\Models\Driver::where('status', 'active')->get();
 
-        if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+        if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
         } else {
             $vehicles = \App\Models\Vehicle::where('status', 'active')->get();
@@ -160,7 +160,7 @@ class TripController extends Controller
     public function update(Request $request, Trip $trip)
     {
         $user = auth()->user();
-        $isVehicleUser = $user->hasRole('Vehicle') || $user->hasRole('Driver');
+        $isVehicleUser = $user->hasRole('Vehicle');
 
         // Vehicle user can only update their own vehicle's trips
         if ($isVehicleUser) {

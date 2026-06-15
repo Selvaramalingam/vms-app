@@ -15,10 +15,10 @@
                    {{ $tab === 'Admin' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-gray-600 hover:bg-slate-50/50 border border-gray-200' }}">
                     🧑‍💼 Admin Logins
                 </a>
-                <a href="{{ route('login-history.index', array_merge(request()->query(), ['tab' => 'Driver'])) }}"
+                <a href="{{ route('login-history.index', array_merge(request()->query(), ['tab' => 'Vehicle'])) }}"
                    class="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2
-                   {{ $tab === 'Driver' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-gray-600 hover:bg-slate-50/50 border border-gray-200' }}">
-                    🚗 Driver Logins
+                   {{ $tab === 'Vehicle' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-gray-600 hover:bg-slate-50/50 border border-gray-200' }}">
+                    🚗 Vehicle Logins
                 </a>
             </div>
 
@@ -56,35 +56,35 @@
                     @endif
                 </div>
 
-                {{-- Driver Last Login Card --}}
+                {{-- Vehicle Last Login Card --}}
                 <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">🚗</div>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900">Driver Last Login</h3>
-                            <p class="text-xs text-gray-400">Latest driver device session</p>
+                            <h3 class="text-sm font-bold text-slate-900">Vehicle Last Login</h3>
+                            <p class="text-xs text-gray-400">Latest vehicle device session</p>
                         </div>
                     </div>
-                    @if($lastDriverLogin)
+                    @if($lastVehicleLogin)
                         <div class="space-y-1.5 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-slate-500">User</span>
-                                <span class="font-semibold text-slate-900">{{ $lastDriverLogin->user->name ?? 'Unknown' }}</span>
+                                <span class="font-semibold text-slate-900">{{ $lastVehicleLogin->user->name ?? 'Unknown' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-500">Device</span>
                                 <span class="font-medium text-slate-700 flex items-center gap-1">
-                                    {{ $lastDriverLogin->platform_type === 'mobile' ? '📱' : '💻' }}
-                                    {{ $lastDriverLogin->device_name }}
+                                    {{ $lastVehicleLogin->platform_type === 'mobile' ? '📱' : '💻' }}
+                                    {{ $lastVehicleLogin->device_name }}
                                 </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-500">Time</span>
-                                <span class="font-medium text-slate-700">{{ $lastDriverLogin->login_datetime->format('d/m/Y h:i A') }}</span>
+                                <span class="font-medium text-slate-700">{{ $lastVehicleLogin->login_datetime->format('d/m/Y h:i A') }}</span>
                             </div>
                         </div>
                     @else
-                        <p class="text-sm text-gray-400 italic">No driver login records found.</p>
+                        <p class="text-sm text-gray-400 italic">No vehicle login records found.</p>
                     @endif
                 </div>
             </div>
@@ -160,8 +160,8 @@
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         @if($history->role === 'Admin')
                                             <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold">🧑‍💼 Admin</span>
-                                        @elseif($history->role === 'Driver')
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">🚗 Driver</span>
+                                        @elseif($history->role === 'Vehicle')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">🚗 Vehicle</span>
                                         @else
                                             <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50/80 text-slate-700 rounded-full text-xs font-semibold">{{ $history->role }}</span>
                                         @endif

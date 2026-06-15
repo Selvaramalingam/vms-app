@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
                 $alerts = [];
 
                 // Optimization: Only run for Admin or if user has a vehicle
-                if ($user->hasRole('Admin') || $user->hasRole('Staff') || $user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+                if ($user->hasRole('Admin') || $user->hasRole('Vehicle')) {
                     
                     $vehiclesQuery = \App\Models\Vehicle::query();
                     
-                    if ($user->hasRole('Vehicle') || $user->hasRole('Driver')) {
+                    if ($user->hasRole('Vehicle')) {
                         $linkedVehicle = $user->vehicle;
                         if ($linkedVehicle) {
                             $vehiclesQuery->where('id', $linkedVehicle->id);
