@@ -52,4 +52,4 @@ EXPOSE 80
 RUN apt-get update && apt-get install -y nodejs npm && npm install && npm run build
 
 # Run migrations, seeders, and start apache on container startup
-CMD ["sh", "-c", "touch database/database.sqlite && php artisan migrate --force && php artisan db:seed --class='database\\\\seeders\\\\VmsDemoSeeder' --force && php artisan db:seed --force && apache2-foreground"]
+CMD ["sh", "-c", "touch database/database.sqlite && php artisan migrate --force && php artisan db:seed --class='Database\\Seeders\\VmsDemoSeeder' --force && php artisan db:seed --force && apache2-foreground"]
