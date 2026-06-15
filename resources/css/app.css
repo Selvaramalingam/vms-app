@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+    nav, header, footer, .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+    }
+    .min-h-screen {
+        min-height: 0 !important;
+    }
+}
