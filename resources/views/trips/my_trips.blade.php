@@ -63,6 +63,9 @@
                                     <p><strong>Total KM:</strong> {{ $trip->total_km }} km</p>
                                     <p class="text-indigo-600 font-bold"><strong>Hours:</strong> {{ $trip->total_hour }} hrs</p>
                                 </div>
+                                @if($trip->work)
+                                    <p class="mt-1"><strong>Work:</strong> {{ $trip->work }}</p>
+                                @endif
                                 @if($trip->maintenance_note || $trip->loan_note)
                                     <div class="mt-2 flex flex-wrap gap-2">
                                         @if($trip->maintenance_note)
@@ -77,11 +80,12 @@
 
 
                             
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center flex-wrap gap-2">
                                 <div>
-                                    <p class="text-xs text-slate-500">Rent</p>
-                                    <p class="font-bold text-green-600">₹{{ number_format($trip->rent_amount, 2) }}</p>
+                                    <p class="text-xs text-slate-500">Total Amount</p>
+                                    <p class="font-bold text-green-600">₹{{ number_format($trip->total_amount, 2) }}</p>
                                 </div>
+
                                 <div>
                                     <p class="text-xs text-slate-500">Fuel</p>
                                     <p class="font-bold text-red-500">₹{{ number_format($trip->fuel_cost, 2) }}</p>

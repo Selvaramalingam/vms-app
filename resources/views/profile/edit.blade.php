@@ -38,6 +38,52 @@
                 </div>
             </div>
 
+            @unlessrole('Vehicle')
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="max-w-3xl">
+                    <section>
+                        <header>
+                            <h2 class="text-lg font-bold text-slate-900">
+                                {{ __('Login History') }}
+                            </h2>
+                            <p class="mt-1 text-sm text-gray-600 mb-4">
+                                {{ __('Your recent login history across devices.') }}
+                            </p>
+                        </header>
+                        
+                        @if(isset($recentLogins) && $recentLogins->isNotEmpty())
+                            <div class="overflow-hidden border border-slate-200 rounded-lg">
+                                <table class="min-w-full divide-y divide-slate-200">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date & Time</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Device</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-slate-200">
+                                        @foreach($recentLogins as $login)
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                                    {{ \Carbon\Carbon::parse($login->login_datetime)->format('d M Y h:i A') }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
+                                                    {{ $login->device_name }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
+                                <p class="text-slate-500 font-medium">No login history available.</p>
+                            </div>
+                        @endif
+                    </section>
+                </div>
+            </div>
+            @endunless
+
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg border-t-4 border-red-500">
                 <div class="max-w-xl">
                     <section class="space-y-6">

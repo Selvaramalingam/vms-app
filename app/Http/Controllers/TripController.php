@@ -58,6 +58,16 @@ class TripController extends Controller
         $vehicles = collect();
         $drivers = \App\Models\Driver::where('status', 'active')->get();
 
+        $lastTripData = \App\Models\Vehicle::with(['trips' => function($q) {
+            $q->latest('date')->take(1);
+        }])->get()->mapWithKeys(function($v) {
+            $lastTrip = $v->trips->first();
+            return [$v->id => [
+                'close_km' => $lastTrip ? $lastTrip->close_km : 0,
+                'close_hour' => $lastTrip ? $lastTrip->close_hour : 0,
+            ]];
+        });
+
         if ($user->hasRole('Vehicle')) {
             $linkedVehicle = $user->vehicle;
             if (!$linkedVehicle) {
@@ -67,7 +77,7 @@ class TripController extends Controller
             $vehicles = \App\Models\Vehicle::where('status', 'active')->get();
         }
 
-        return view('trips.create', compact('vehicles', 'drivers', 'linkedVehicle'));
+        return view('trips.create', compact('vehicles', 'drivers', 'linkedVehicle', 'lastTripData'));
     }
 
     public function store(Request $request)
@@ -83,8 +93,9 @@ class TripController extends Controller
         }
 
         $validated = $request->validate([
-            'date' => 'nullable|date',
-            'location' => 'required|string',
+            'date' => 'required|date',
+            'to_date' => 'nullable|date|after_or_equal:date',
+            'location' => 'required|string|max:255',
             'vehicle_id' => 'required|exists:vehicles,id',
             'driver_id' => 'required|exists:drivers,id',
             'trip_type' => 'nullable|in:rent,own,empty',
@@ -93,6 +104,8 @@ class TripController extends Controller
             'open_hour' => 'nullable',
             'close_hour' => 'nullable',
             'rent_amount' => 'nullable|numeric',
+            'padi_kaasu' => 'nullable|numeric',
+            'work' => 'nullable|string',
             'diesel_price' => 'nullable|numeric',
             'fuel_litre' => 'nullable|numeric',
             'user_name' => 'nullable|string',
@@ -108,6 +121,7 @@ class TripController extends Controller
         $validated['open_km'] = $validated['open_km'] ?? 0;
         $validated['close_km'] = $validated['close_km'] ?? 0;
         $validated['rent_amount'] = $validated['rent_amount'] ?? 0;
+        $validated['padi_kaasu'] = $validated['padi_kaasu'] ?? 0;
         $validated['diesel_price'] = $validated['diesel_price'] ?? 0;
         $validated['fuel_litre'] = $validated['fuel_litre'] ?? 0;
 
@@ -179,13 +193,16 @@ class TripController extends Controller
             'close_km' => 'nullable|numeric',
             'maintenance_note' => 'nullable|string',
             'loan_note' => 'nullable|string',
+            'padi_kaasu' => 'nullable|numeric',
+            'work' => 'nullable|string',
         ];
 
 
         // Only validate all fields if not a vehicle user
         if (!$isVehicleUser) {
             $rules = array_merge($rules, [
-                'date' => 'nullable|date',
+                'date' => 'required|date',
+                'to_date' => 'nullable|date|after_or_equal:date',
                 'vehicle_id' => 'required|exists:vehicles,id',
                 'driver_id' => 'required|exists:drivers,id',
                 'trip_type' => 'nullable|in:rent,own,empty',
@@ -200,12 +217,14 @@ class TripController extends Controller
         // Keep original values for restricted fields if Vehicle user
         if ($isVehicleUser) {
             $validated['date'] = $trip->date;
+            $validated['to_date'] = $trip->to_date;
             $validated['vehicle_id'] = $trip->vehicle_id;
             $validated['driver_id'] = $trip->driver_id;
             $validated['trip_type'] = $trip->trip_type;
             $validated['open_km'] = $trip->open_km;
             $validated['open_hour'] = $trip->open_hour;
             $validated['rent_amount'] = $trip->rent_amount;
+            $validated['work'] = $trip->work;
         }
 
         if (empty($validated['open_km']) && empty($validated['open_hour'])) {
@@ -215,6 +234,7 @@ class TripController extends Controller
         $validated['open_km'] = $validated['open_km'] ?? 0;
         $validated['close_km'] = $validated['close_km'] ?? 0;
         $validated['rent_amount'] = $validated['rent_amount'] ?? 0;
+        $validated['padi_kaasu'] = $validated['padi_kaasu'] ?? 0;
         $validated['diesel_price'] = $validated['diesel_price'] ?? 0;
         $validated['fuel_litre'] = $validated['fuel_litre'] ?? 0;
 

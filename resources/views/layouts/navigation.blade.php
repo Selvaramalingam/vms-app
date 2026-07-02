@@ -2,6 +2,7 @@
 <div x-data="{ notificationsOpen: false }">
 
     {{-- Mobile Overlay --}}
+    @unlessrole('Vehicle')
     <div x-show="$store.sidebar.open" 
          x-cloak
          x-transition:enter="transition-opacity ease-linear duration-300" 
@@ -10,7 +11,7 @@
          x-transition:leave="transition-opacity ease-linear duration-300" 
          x-transition:leave-start="opacity-100" 
          x-transition:leave-end="opacity-0" 
-         class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden" 
+         class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm" 
          @click="$store.sidebar.close()"></div>
 
     {{-- Sidebar --}}
@@ -32,10 +33,10 @@
         </div>
 
         {{-- Nav Items --}}
-        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5 sidebar-scroll">
+        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5 sidebar-scroll" @click="if ($event.target.closest('a.sidebar-link')) $store.sidebar.close()">
             <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zm10-3a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>
-                <span>Overview</span>
+                <span>Dashboard</span>
             </a>
 
             @hasrole('Admin')
@@ -96,11 +97,6 @@
                 <span>Invoice</span>
             </a>
 
-            <div class="sidebar-section">System</div>
-            <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>Settings</span>
-            </a>
             @endrole
 
             @hasrole('Vehicle')
@@ -143,19 +139,76 @@
             </div>
         </div>
     </aside>
+    @endunlessrole
 
     {{-- Top Header Bar --}}
+    @hasrole('Vehicle')
+    <header class="fixed top-0 right-0 left-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 transition-all duration-300">
+    @else
     <header :class="$store.sidebar.open ? 'lg:left-[260px]' : 'lg:left-0'" class="fixed top-0 right-0 left-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 transition-all duration-300">
+    @endhasrole
         <div class="flex items-center gap-3">
+            @unlessrole('Vehicle')
             <button x-show="!$store.sidebar.open" @click.stop="$store.sidebar.open = true" class="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 transition-colors" title="Open Sidebar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
+            @endunlessrole
+            <a href="{{ route('dashboard') }}" class="p-1.5 rounded-md text-indigo-600 hover:bg-indigo-50 transition-colors" title="Home">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </a>
             <h1 class="text-sm font-semibold text-slate-800 tracking-tight" id="pageTitle">
                 @yield('page_title', 'Vehicle Management')
             </h1>
         </div>
         
         <div class="flex items-center gap-4">
+            @hasrole('Vehicle')
+            <div class="hidden sm:flex items-center gap-4 mr-2">
+                <a href="{{ route('trips.my') }}" class="text-sm font-medium {{ request()->routeIs('trips.my') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : 'text-slate-600 hover:text-indigo-600 transition-colors' }}">My Trips</a>
+                <a href="{{ route('trips.create') }}" class="text-sm font-medium {{ request()->routeIs('trips.create') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : 'text-slate-600 hover:text-indigo-600 transition-colors' }}">Add Trip</a>
+                <a href="{{ route('maintenances.index') }}" class="text-sm font-medium {{ request()->routeIs('maintenances.*') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : 'text-slate-600 hover:text-indigo-600 transition-colors' }}">Maintenance</a>
+                {{-- Direct Profile Link --}}
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 hover:bg-indigo-100 transition-colors" title="Profile">
+                    <div class="w-6 h-6 rounded-full bg-white flex items-center justify-center font-bold text-xs">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                    <span class="text-sm font-bold">{{ Auth::user()->name }}</span>
+                </a>
+
+                {{-- Logout Button --}}
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="px-3 py-1.5 rounded-md text-sm font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors">Logout</button>
+                </form>
+            </div>
+
+            <!-- Mobile Menu Toggle (Vehicle) -->
+            <div class="sm:hidden flex items-center mr-2" x-data="{ mobileMenuOpen: false }">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-md text-slate-500 hover:bg-slate-100 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                
+                <!-- Mobile Menu Dropdown -->
+                <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" x-cloak x-transition class="absolute top-16 right-0 left-0 bg-white border-b border-slate-200 shadow-lg py-2 z-40">
+                    <div class="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-slate-500">Vehicle Profile</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('trips.my') }}" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600">My Trips</a>
+                    <a href="{{ route('trips.create') }}" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Add Trip</a>
+                    <a href="{{ route('maintenances.index') }}" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Maintenance</a>
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Profile</a>
+                    <form method="POST" action="{{ route('logout') }}" class="border-t border-slate-100 mt-2">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50">Logout</button>
+                    </form>
+                </div>
+            </div>
+            @endhasrole
+
             {{-- Notifications --}}
             <div class="relative">
                 <button @click="notificationsOpen = !notificationsOpen" class="relative p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">

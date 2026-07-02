@@ -88,6 +88,9 @@
                                             <span class="text-xs text-slate-500">{{ $trip->total_km }} km</span>
                                             <span class="text-xs text-indigo-500 font-bold ml-1">{{ $trip->total_hour }} hrs</span>
                                         </div>
+                                        @if($trip->work)
+                                            <div class="mt-1 text-xs text-slate-600"><strong>Work:</strong> {{ $trip->work }}</div>
+                                        @endif
                                         @if($trip->maintenance_note || $trip->loan_note)
                                             <div class="mt-2 space-y-1">
                                                 @if($trip->maintenance_note)
@@ -103,7 +106,8 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                                            <span class="text-slate-500">Rent:</span> <span class="font-bold text-green-600 text-right">₹{{ number_format($trip->rent_amount, 2) }}</span>
+                                            <span class="text-slate-500">Total Amount:</span> <span class="font-bold text-green-600 text-right">₹{{ number_format($trip->total_amount, 2) }}</span>
+
                                             <span class="text-slate-500">Fuel:</span> <span class="font-bold text-red-500 text-right">₹{{ number_format($trip->fuel_cost, 2) }}</span>
                                             <span class="text-slate-500 font-bold">Profit:</span> <span class="font-black text-blue-600 text-right">₹{{ number_format($trip->profit, 2) }}</span>
                                         </div>

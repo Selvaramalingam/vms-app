@@ -91,10 +91,20 @@
                                             <div class="{{ $vehicle->tax_expiry && $vehicle->tax_expiry->isPast() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
                                                 <span class="text-gray-400">Tax:</span> {{ $vehicle->tax_expiry ? $vehicle->tax_expiry->format('d/m/y') : 'N/A' }}
                                             </div>
+                                            <div class="{{ $vehicle->caliber_certificate_date && $vehicle->caliber_certificate_date->isPast() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
+                                                <span class="text-gray-400">Caliber:</span> {{ $vehicle->caliber_certificate_date ? $vehicle->caliber_certificate_date->format('d/m/y') : 'N/A' }}
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('vehicles.edit', $vehicle) }}" class="text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded transition">Edit</a>
+                                        <div class="flex space-x-2">
+                                            <a href="{{ route('vehicles.edit', $vehicle) }}" class="text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded transition">Edit</a>
+                                            <form action="{{ route('vehicles.destroy', $vehicle) }}" method="POST" class="inline" onsubmit="return confirm('Delete this vehicle?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-100 px-3 py-1.5 rounded transition">Delete</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

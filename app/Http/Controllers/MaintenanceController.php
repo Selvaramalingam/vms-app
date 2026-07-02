@@ -119,6 +119,7 @@ class MaintenanceController extends Controller
             'km' => 'nullable|numeric',
             'hours' => 'nullable|numeric',
             'next_service_km' => 'nullable|numeric',
+            'next_service_hrs' => 'nullable|numeric',
             'next_service_date' => 'nullable|date',
             'status' => 'nullable|in:pending,approved,rejected',
         ]);
@@ -188,6 +189,7 @@ class MaintenanceController extends Controller
             'km' => 'nullable|numeric',
             'hours' => 'nullable|numeric',
             'next_service_km' => 'nullable|numeric',
+            'next_service_hrs' => 'nullable|numeric',
             'next_service_date' => 'nullable|date',
         ];
 
@@ -237,9 +239,10 @@ class MaintenanceController extends Controller
         $vehicle = Vehicle::find($validated['vehicle_id']);
         if ($vehicle) {
             $vehicle->update([
-                'last_service_km' => $validated['km'],
-                'last_service_date' => $validated['date'],
+                'last_service_km' => $validated['km'] ?? $vehicle->last_service_km,
+                'last_service_date' => $validated['date'] ?? $vehicle->last_service_date,
                 'next_service_km' => $validated['next_service_km'] ?? $vehicle->next_service_km,
+                'next_service_hrs' => $validated['next_service_hrs'] ?? $vehicle->next_service_hrs,
                 'next_service_date' => $validated['next_service_date'] ?? $vehicle->next_service_date,
             ]);
         }

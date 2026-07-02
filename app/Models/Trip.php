@@ -13,6 +13,7 @@ class Trip extends Model
 
     protected $casts = [
         'date' => 'date',
+        'to_date' => 'date',
     ];
 
     public function vehicle()
@@ -40,9 +41,14 @@ class Trip extends Model
         return $this->hasMany(FuelEntry::class);
     }
     
+    public function getTotalAmountAttribute()
+    {
+        return $this->rent_amount + ($this->padi_kaasu ?? 0);
+    }
+
     public function getProfitAttribute()
     {
-        $rent = $this->rent_amount;
+        $rent = $this->rent_amount + ($this->padi_kaasu ?? 0);
         $fuel = $this->fuel_cost;
         $maintenance = 0; // Or calculate from related if applicable
         return $rent - $fuel - $maintenance;

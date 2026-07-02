@@ -25,8 +25,23 @@
                         
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-bold text-slate-700">Date</label>
-                                <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                <label class="block text-sm font-bold text-slate-700">Trip Type</label>
+                                <select name="trip_type" x-model="trip_type" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <option value="rent">Rent</option>
+                                    <option value="own">Own</option>
+                                    <option value="empty">Empty</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">From Date</label>
+                                    <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">To Date</label>
+                                    <input type="date" name="to_date" value="{{ old('to_date') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                </div>
                             </div>
 
                              <div>
@@ -69,36 +84,33 @@
                                 </select>
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700">Trip Type</label>
-                                <select name="trip_type" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
-                                    <option value="rent">Rent</option>
-                                    <option value="own">Own</option>
-                                    <option value="empty">Empty</option>
-                                </select>
-                            </div>
+
 
                             <!-- KM Tracking -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Open KM</label>
-                                    <input type="number" name="open_km" x-model="open_km" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" name="open_km" x-model="open_km" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Close KM</label>
-                                    <input type="number" name="close_km" value="{{ old('close_km') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" name="close_km" x-model="close_km" value="{{ old('close_km') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
+                            </div>
+
+                            <div x-show="open_km || close_km" class="bg-blue-50 p-3 rounded-md border border-blue-100 mt-2">
+                                <p class="text-sm font-bold text-blue-800">Total KM: <span x-text="calculateTotalKM()"></span> KM</p>
                             </div>
 
                             <!-- Hour Tracking -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Open Hour</label>
-                                    <input type="number" step="0.01" name="open_hour" x-model="open_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" step="0.01" name="open_hour" x-model="open_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Close Hour</label>
-                                    <input type="number" step="0.01" name="close_hour" x-model="close_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" step="0.01" name="close_hour" x-model="close_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
                             </div>
 
@@ -107,19 +119,36 @@
                             </div>
 
                             <!-- Financials -->
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700">Rent Amount (₹)</label>
-                                <input type="number" step="0.01" name="rent_amount" value="{{ old('rent_amount') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-green-600">
-                            </div>
-
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
+                                    <label class="block text-sm font-bold text-slate-700">Rent Amount (₹)</label>
+                                    <input type="number" min="0" step="0.01" name="rent_amount" x-model="rent_amount" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-green-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Padi Kaasu (படி காசு)</label>
+                                    <input type="number" min="0" step="0.01" name="padi_kaasu" x-model="padi_kaasu" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-indigo-600">
+                                </div>
+                            </div>
+                            
+                            <div x-show="rent_amount || padi_kaasu" class="bg-green-50 p-3 rounded-md border border-green-100 mt-2">
+                                <p class="text-sm font-bold text-green-800">Total Amount: ₹<span x-text="calculateTotalAmount()"></span></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                <div class="col-span-1 sm:col-span-2">
+                                    <label class="block text-sm font-bold text-slate-700">Work</label>
+                                    <input type="text" name="work" value="{{ old('work') }}" placeholder="Describe work" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                <div>
                                     <label class="block text-sm font-bold text-slate-700">Fuel (Litres)</label>
-                                    <input type="number" step="0.01" name="fuel_litre" value="{{ old('fuel_litre') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" step="0.01" name="fuel_litre" value="{{ old('fuel_litre') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Diesel Price</label>
-                                    <input type="number" step="0.01" name="diesel_price" value="{{ old('diesel_price') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" step="0.01" name="diesel_price" value="{{ old('diesel_price') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                             </div>
 
@@ -142,27 +171,54 @@
 
     <script>
         function tripForm() {
+            const lastTripData = @json($lastTripData);
+            const initialVehicle = '{{ $linkedVehicle ? $linkedVehicle->id : old('vehicle_id') }}';
+            const initOpenKm = initialVehicle && lastTripData[initialVehicle] ? lastTripData[initialVehicle].close_km : '';
+            const initOpenHr = initialVehicle && lastTripData[initialVehicle] ? lastTripData[initialVehicle].close_hour : 0;
+
             return {
-                open_km: '{{ old('open_km') }}',
-                open_hour: '{{ old('open_hour', 0) }}',
+                vehicle_id: initialVehicle,
+                trip_type: '{{ old('trip_type', 'rent') }}',
+                open_km: '{{ old('open_km') }}' || initOpenKm,
+                close_km: '{{ old('close_km') }}',
+                open_hour: '{{ old('open_hour') }}' || initOpenHr,
                 close_hour: '{{ old('close_hour', 0) }}',
+                rent_amount: '{{ old('rent_amount') }}',
+                padi_kaasu: '{{ old('padi_kaasu') }}',
+                diesel_price: '{{ old('diesel_price') }}',
+                fuel_litre: '{{ old('fuel_litre') }}',
+                work: '{{ old('work') }}',
                 
                 init() {
                     // Auto-fetch if vehicle is already linked (Vehicle Login)
-                    if (this.$refs.vehicle_id) {
-                        this.fetchLastTrip(this.$refs.vehicle_id.value);
+                    if (document.querySelector('input[name="vehicle_id"]')) {
+                        this.fetchLastTrip(document.querySelector('input[name="vehicle_id"]').value);
                     } else {
-                        // For Admin/Staff, check if a vehicle is already selected (e.g. on validation error)
+                        // For Admin/Staff, check if a vehicle is already selected
                         let select = document.querySelector('select[name="vehicle_id"]');
                         if (select && select.value && !this.open_km && !this.open_hour) {
                             this.fetchLastTrip(select.value);
                         }
+                        // Watch for vehicle selection changes
+                        this.$watch('vehicle_id', value => {
+                            if (value) this.fetchLastTrip(value);
+                        });
                     }
                 },
 
 
                 calculateTotalHours() {
                     let total = (parseFloat(this.close_hour) || 0) - (parseFloat(this.open_hour) || 0);
+                    return total > 0 ? total.toFixed(2) : 0;
+                },
+
+                calculateTotalKM() {
+                    let total = (parseFloat(this.close_km) || 0) - (parseFloat(this.open_km) || 0);
+                    return total > 0 ? total.toFixed(2) : 0;
+                },
+
+                calculateTotalAmount() {
+                    let total = (parseFloat(this.rent_amount) || 0) + (parseFloat(this.padi_kaasu) || 0);
                     return total > 0 ? total.toFixed(2) : 0;
                 },
 

@@ -7,6 +7,7 @@ use App\Models\Trip;
 use App\Models\FuelEntry;
 use App\Models\VehicleExpiry;
 use App\Models\Maintenance;
+use App\Models\LoginHistory;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -39,7 +40,7 @@ class DashboardController extends Controller
         
         $todayTrips = Trip::whereDate('date', $today)->count();
         $todayHours = Trip::whereDate('date', $today)->sum('total_hour');
-        $todayIncome = Trip::whereDate('date', $today)->sum('rent_amount');
+        $todayIncome = Trip::whereDate('date', $today)->sum('rent_amount') + Trip::whereDate('date', $today)->sum('padi_kaasu');
         $fuelExpense = Trip::whereDate('date', $today)->sum('fuel_cost');
         $profit = $todayIncome - $fuelExpense;
 
@@ -57,7 +58,7 @@ class DashboardController extends Controller
             ->get();
             
         // Top Vehicles (by Profit)
-        $topVehiclesQuery = Trip::selectRaw('vehicle_id, sum(rent_amount) as total_rent, sum(fuel_cost) as total_fuel, sum(rent_amount) - sum(fuel_cost) as total_profit')
+        $topVehiclesQuery = Trip::selectRaw('vehicle_id, sum(rent_amount + COALESCE(padi_kaasu, 0)) as total_rent, sum(fuel_cost) as total_fuel, sum(rent_amount + COALESCE(padi_kaasu, 0)) - sum(fuel_cost) as total_profit')
             ->with('vehicle')
             ->where('date', '>=', Carbon::now()->subDays(30))
             ->groupBy('vehicle_id')
@@ -66,7 +67,7 @@ class DashboardController extends Controller
             ->get();
 
         // Monthly profit data for chart (last 30 days, grouped by week)
-        $profitData = Trip::selectRaw('strftime("%W", date) as week_num, sum(rent_amount) as rent, sum(fuel_cost) as fuel, sum(rent_amount) - sum(fuel_cost) as profit')
+        $profitData = Trip::selectRaw('strftime("%W", date) as week_num, sum(rent_amount + COALESCE(padi_kaasu, 0)) as rent, sum(fuel_cost) as fuel, sum(rent_amount + COALESCE(padi_kaasu, 0)) - sum(fuel_cost) as profit')
             ->where('date', '>=', Carbon::now()->subDays(30))
             ->groupBy('week_num')
             ->orderBy('week_num')
@@ -77,8 +78,14 @@ class DashboardController extends Controller
         $pendingCount = \App\Models\TripPayment::where('status', '!=', 'completed')->count();
         $totalNotifications = $notificationCount + $pendingCount;
 
+        // Recent Logins
+        $lastLogin = LoginHistory::where('user_id', $user->id)
+            ->latest('login_datetime')
+            ->skip(1)
+            ->first();
+
         return view('dashboard', compact(
-            'todayTrips', 'todayHours', 'todayIncome', 'fuelExpense', 'profit', 'pendingPayments', 'expiryAlerts', 'recentTrips', 'topVehiclesQuery', 'totalNotifications', 'profitData'
+            'todayTrips', 'todayHours', 'todayIncome', 'fuelExpense', 'profit', 'pendingPayments', 'expiryAlerts', 'recentTrips', 'topVehiclesQuery', 'totalNotifications', 'profitData', 'lastLogin'
         ));
 
     }

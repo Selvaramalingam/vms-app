@@ -61,7 +61,7 @@ class LoginHistory extends Model
             $browser = 'Firefox';
         }
 
-        return "{$platform} - {$browser}";
+        return "{$platform} ({$browser})";
     }
 
     /**

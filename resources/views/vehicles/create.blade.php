@@ -90,6 +90,10 @@
                                         <label class="block text-sm font-bold text-slate-700">Pollution Expiry</label>
                                         <input type="date" name="pollution_expiry" value="{{ old('pollution_expiry', isset($vehicle->pollution_expiry) ? $vehicle->pollution_expiry->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                     </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700">Caliber Certificate</label>
+                                        <input type="date" name="caliber_certificate_date" value="{{ old('caliber_certificate_date', isset($vehicle->caliber_certificate_date) ? $vehicle->caliber_certificate_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    </div>
                                 </div>
                             </div>
 

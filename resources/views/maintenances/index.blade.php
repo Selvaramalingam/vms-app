@@ -85,6 +85,11 @@
                                         <div><span class="text-slate-500">Service KM:</span> {{ $m->km }}</div>
                                         <div><span class="text-slate-500">Hours:</span> {{ $m->hours ?? 0 }}</div>
                                         <div class="mt-1 text-[10px] text-blue-500 font-bold">Next: {{ $m->next_service_km ?? 'N/A' }} km</div>
+                                        <div class="mt-1 pt-1 border-t border-slate-100">
+                                            <span class="text-[10px] text-slate-500 uppercase">Current:</span> 
+                                            <span class="font-bold text-slate-700">{{ $m->vehicle->current_km }} km</span> • 
+                                            <span class="font-bold text-slate-700">{{ $m->vehicle->current_hour }} hr</span>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <div class="font-black text-slate-900">₹{{ number_format($m->cost, 2) }}</div>

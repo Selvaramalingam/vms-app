@@ -19,6 +19,7 @@ class Vehicle extends Model
         'pollution_expiry' => 'date',
         'last_service_date' => 'date',
         'next_service_date' => 'date',
+        'caliber_certificate_date' => 'date',
     ];
 
     public function drivers()
@@ -44,5 +45,15 @@ class Vehicle extends Model
     public function expiries()
     {
         return $this->hasMany(VehicleExpiry::class);
+    }
+
+    public function getCurrentKmAttribute()
+    {
+        return $this->trips()->orderByDesc('date')->orderByDesc('id')->value('close_km') ?? 0;
+    }
+
+    public function getCurrentHourAttribute()
+    {
+        return $this->trips()->orderByDesc('date')->orderByDesc('id')->value('close_hour') ?? 0;
     }
 }

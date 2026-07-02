@@ -43,7 +43,7 @@ class InvoiceController extends Controller
         }
 
         // Totals
-        $totalRentAmount     = $trips->sum('rent_amount');
+        $totalRentAmount     = $trips->sum('total_amount');
         $totalDieselLtr      = $trips->sum('fuel_litre');
         $totalOverallDiesel  = $trips->sum('fuel_cost');
 

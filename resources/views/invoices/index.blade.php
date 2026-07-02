@@ -243,7 +243,7 @@
                                         ₹{{ number_format((float)($trip->fuel_cost ?? 0), 2) }}
                                     </td>
                                     <td class="text-right tabular-nums text-emerald-700 font-bold" data-col="7">
-                                        ₹{{ number_format((float)($trip->rent_amount ?? 0), 2) }}
+                                        ₹{{ number_format((float)($trip->total_amount ?? 0), 2) }}
                                     </td>
                                 </tr>
                             @endforeach

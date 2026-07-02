@@ -1,15 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-900 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-slate-900 leading-tight">
+                {{ __('Dashboard') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Metrics Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4  mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4  mb-6">
 
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden p-4 ">
                     <div class="text-sm text-slate-500 uppercase font-bold">Today Trips</div>
@@ -21,7 +23,6 @@
                     <div class="text-2xl font-black text-indigo-600">{{ number_format($todayHours, 2) }}</div>
                 </div>
 
-                
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden p-4 ">
                     <div class="text-sm text-slate-500 uppercase font-bold">Today Income</div>
                     <div class="text-2xl font-black text-green-600">₹{{ number_format($todayIncome, 2) }}</div>
@@ -35,6 +36,19 @@
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden p-4 ">
                     <div class="text-sm text-slate-500 uppercase font-bold">Today Profit</div>
                     <div class="text-2xl font-black text-purple-600">₹{{ number_format($profit, 2) }}</div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden p-4 ">
+                    <div class="text-sm text-slate-500 uppercase font-bold flex justify-between items-center">
+                        Last Login
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                    </div>
+                    @if(isset($lastLogin) && $lastLogin)
+                        <div class="text-sm font-black text-slate-900 mt-1">{{ \Carbon\Carbon::parse($lastLogin->login_datetime)->format('d M Y, h:i A') }}</div>
+                        <div class="text-xs font-semibold text-slate-500 mt-0.5 truncate" title="{{ $lastLogin->device_name }}">{{ $lastLogin->device_name }}</div>
+                    @else
+                        <div class="text-sm font-black text-slate-400 mt-1">No prior login</div>
+                    @endif
                 </div>
             </div>
 
@@ -98,7 +112,7 @@
                                             <p class="text-xs text-slate-500">{{ $trip->vehicle->vehicle_number ?? '' }} • {{ $trip->driver->driver_name ?? '' }}</p>
                                         </div>
                                         <div class="text-right">
-                                            <span class="font-bold text-green-600">₹{{ number_format($trip->rent_amount, 0) }}</span>
+                                            <span class="font-bold text-green-600">₹{{ number_format($trip->total_amount, 0) }}</span>
                                             <p class="text-xs text-gray-400">{{ $trip->date->format('d M Y') }}</p>
                                         </div>
                                     </li>
@@ -202,6 +216,8 @@
                     </a>
                 </div>
             </div>
+
+
 
         </div>
     </div>

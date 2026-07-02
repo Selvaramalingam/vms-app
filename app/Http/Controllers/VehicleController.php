@@ -49,6 +49,8 @@ class VehicleController extends Controller
             'next_service_km' => 'nullable|numeric',
             'last_service_date' => 'nullable|date',
             'next_service_date' => 'nullable|date',
+            'next_service_hrs' => 'nullable|numeric',
+            'caliber_certificate_date' => 'nullable|date',
         ]);
 
         $vehicle = Vehicle::create($validated);
@@ -64,6 +66,14 @@ class VehicleController extends Controller
                     'expiry_date' => $request->$dateField,
                 ]);
             }
+        }
+        
+        if ($request->filled('caliber_certificate_date')) {
+            VehicleExpiry::create([
+                'vehicle_id' => $vehicle->id,
+                'expiry_type' => 'caliber_certificate',
+                'expiry_date' => $request->caliber_certificate_date,
+            ]);
         }
 
         \App\Models\ActivityLog::log('created', 'Vehicle', 'New vehicle added: ' . $vehicle->vehicle_number);
@@ -94,6 +104,8 @@ class VehicleController extends Controller
             'next_service_km' => 'nullable|numeric',
             'last_service_date' => 'nullable|date',
             'next_service_date' => 'nullable|date',
+            'next_service_hrs' => 'nullable|numeric',
+            'caliber_certificate_date' => 'nullable|date',
         ]);
 
         $vehicle->update($validated);
@@ -110,8 +122,23 @@ class VehicleController extends Controller
             }
         }
 
+        if ($request->filled('caliber_certificate_date')) {
+            VehicleExpiry::updateOrCreate(
+                ['vehicle_id' => $vehicle->id, 'expiry_type' => 'caliber_certificate'],
+                ['expiry_date' => $request->caliber_certificate_date]
+            );
+        }
+
         \App\Models\ActivityLog::log('updated', 'Vehicle', 'Vehicle updated: ' . $vehicle->vehicle_number);
 
         return redirect()->route('vehicles.index')->with('success', 'Vehicle updated successfully!');
+    }
+
+    public function destroy(Vehicle $vehicle)
+    {
+        $number = $vehicle->vehicle_number;
+        $vehicle->delete();
+        \App\Models\ActivityLog::log('deleted', 'Vehicle', 'Vehicle deleted: ' . $number);
+        return redirect()->route('vehicles.index')->with('success', 'Vehicle deleted successfully!');
     }
 }

@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
+    <div class="py-6" x-data="maintenanceForm()">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white border border-slate-200 rounded-xl shadow-sm">
                 <div class="p-6 text-slate-900">
@@ -28,6 +28,13 @@
                         @csrf
                         @method('PUT')
                         
+                        <div x-show="current_km !== null || current_hour !== null" class="bg-blue-50 p-3 rounded-md border border-blue-100 mb-4 flex justify-between items-center" style="display: none;">
+                            <div class="text-sm">
+                                <p class="font-bold text-blue-800">Current Vehicle Status:</p>
+                                <p class="text-blue-700">KM: <span x-text="current_km || '0'" class="font-black"></span> &bull; Hrs: <span x-text="current_hour || '0'" class="font-black"></span></p>
+                            </div>
+                        </div>
+
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-bold text-slate-700">Vehicle</label>
@@ -35,8 +42,9 @@
                                     <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold">
                                         {{ $maintenance->vehicle->vehicle_number ?? 'Unknown' }}
                                     </div>
+                                    <input type="hidden" name="vehicle_id" value="{{ $maintenance->vehicle_id }}" x-ref="vehicle_id">
                                 @else
-                                    <select name="vehicle_id" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <select name="vehicle_id" @change="fetchVehicleData($event.target.value)" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                         <option value="">Select Vehicle</option>
                                         @foreach($vehicles as $v)
                                             <option value="{{ $v->id }}" {{ $maintenance->vehicle_id == $v->id ? 'selected' : '' }}>{{ $v->vehicle_number }}</option>
@@ -58,23 +66,27 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Cost (₹)</label>
-                                    <input type="number" step="0.01" name="cost" value="{{ old('cost', $maintenance->cost) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-red-600">
+                                    <input type="number" min="0" step="0.01" name="cost" value="{{ old('cost', $maintenance->cost) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-red-600">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Service KM</label>
-                                    <input type="number" name="km" value="{{ old('km', $maintenance->km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" name="km" value="{{ old('km', $maintenance->km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Service Hours</label>
-                                    <input type="number" name="hours" value="{{ old('hours', $maintenance->hours) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" step="0.01" name="hours" value="{{ old('hours', $maintenance->hours) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                             </div>
                             
                             <h4 class="font-bold text-slate-900 pt-4 border-t">Forecast</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Next Service KM</label>
-                                    <input type="number" name="next_service_km" value="{{ old('next_service_km', $maintenance->next_service_km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                    <input type="number" min="0" name="next_service_km" value="{{ old('next_service_km', $maintenance->next_service_km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Next Service Hrs</label>
+                                    <input type="number" min="0" step="0.01" name="next_service_hrs" value="{{ old('next_service_hrs', $maintenance->next_service_hrs) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Next Service Date</label>
@@ -105,5 +117,40 @@
                 </div>
             </div>
         </div>
-    </div>
 </x-app-layout>
+
+    <script>
+        function maintenanceForm() {
+            return {
+                current_km: null,
+                current_hour: null,
+
+                init() {
+                    if (this.$refs.vehicle_id) {
+                        this.fetchVehicleData(this.$refs.vehicle_id.value);
+                    } else {
+                        let select = document.querySelector('select[name="vehicle_id"]');
+                        if (select && select.value) {
+                            this.fetchVehicleData(select.value);
+                        }
+                    }
+                },
+
+                fetchVehicleData(vehicleId) {
+                    if (!vehicleId) {
+                        this.current_km = null;
+                        this.current_hour = null;
+                        return;
+                    }
+                    
+                    fetch(`/api/vehicles/${vehicleId}/last-trip`)
+                        .then(res => res.json())
+                        .then(data => {
+                            this.current_km = data.close_km;
+                            this.current_hour = data.close_hour;
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+        }
+    </script>

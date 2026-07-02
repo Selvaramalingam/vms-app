@@ -134,7 +134,11 @@
             </div>
 
             <!-- Main Content Area -->
-            <div :class="$store.sidebar.open ? 'lg:ml-[260px]' : 'lg:ml-0'" class="pt-16 min-h-screen transition-all duration-300 flex flex-col">
+            @hasrole('Vehicle')
+            <div class="pt-16 min-h-screen transition-all duration-300 flex flex-col">
+            @else
+            <div class="pt-16 min-h-screen transition-all duration-300 flex flex-col">
+            @endhasrole
                 
                 {{-- Global Urgent Alerts Banner --}}
                 @hasanyrole('Admin|Staff|Vehicle|Driver')

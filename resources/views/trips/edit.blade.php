@@ -29,15 +29,44 @@
                         
                         <div class="space-y-4">
                              <div>
-                                 <label class="block text-sm font-bold text-slate-700">Date</label>
+                                 <label class="block text-sm font-bold text-slate-700">Trip Type</label>
                                  @if($isVehicle)
-                                     <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold">
-                                         {{ $trip->date->format('d M Y') }}
+                                     <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold uppercase">
+                                         {{ $trip->trip_type }}
                                      </div>
-                                     <input type="hidden" name="date" value="{{ $trip->date->format('Y-m-d') }}">
+                                     <input type="hidden" name="trip_type" value="{{ $trip->trip_type }}" x-model="trip_type">
                                  @else
-                                     <input type="date" name="date" value="{{ old('date', $trip->date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                     <select name="trip_type" x-model="trip_type" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                         <option value="rent">Rent</option>
+                                         <option value="own">Own</option>
+                                         <option value="empty">Empty</option>
+                                     </select>
                                  @endif
+                             </div>
+
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                 <div>
+                                     <label class="block text-sm font-bold text-slate-700">From Date</label>
+                                     @if($isVehicle)
+                                         <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold">
+                                             {{ $trip->date->format('d M Y') }}
+                                         </div>
+                                         <input type="hidden" name="date" value="{{ $trip->date->format('Y-m-d') }}">
+                                     @else
+                                         <input type="date" name="date" value="{{ old('date', $trip->date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                     @endif
+                                 </div>
+                                 <div>
+                                     <label class="block text-sm font-bold text-slate-700">To Date</label>
+                                     @if($isVehicle)
+                                         <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold">
+                                             {{ $trip->to_date ? $trip->to_date->format('d M Y') : 'N/A' }}
+                                         </div>
+                                         <input type="hidden" name="to_date" value="{{ $trip->to_date ? $trip->to_date->format('Y-m-d') : '' }}">
+                                     @else
+                                         <input type="date" name="to_date" value="{{ old('to_date', $trip->to_date ? $trip->to_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                     @endif
+                                 </div>
                              </div>
 
                              <div>
@@ -87,21 +116,7 @@
                                 @endif
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700">Trip Type</label>
-                                @if($isVehicle)
-                                    <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-semibold uppercase">
-                                        {{ $trip->trip_type }}
-                                    </div>
-                                    <input type="hidden" name="trip_type" value="{{ $trip->trip_type }}">
-                                @else
-                                    <select name="trip_type" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
-                                        <option value="rent" {{ $trip->trip_type == 'rent' ? 'selected' : '' }}>Rent</option>
-                                        <option value="own" {{ $trip->trip_type == 'own' ? 'selected' : '' }}>Own</option>
-                                        <option value="empty" {{ $trip->trip_type == 'empty' ? 'selected' : '' }}>Empty</option>
-                                    </select>
-                                @endif
-                            </div>
+
 
                             <!-- KM Tracking -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -113,13 +128,17 @@
                                         </div>
                                         <input type="hidden" name="open_km" value="{{ $trip->open_km }}">
                                     @else
-                                        <input type="number" name="open_km" value="{{ old('open_km', $trip->open_km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                        <input type="number" min="0" name="open_km" x-model="open_km" value="{{ old('open_km', $trip->open_km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                     @endif
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Close KM</label>
-                                    <input type="number" name="close_km" x-model="close_km" value="{{ old('close_km', $trip->close_km) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" name="close_km" x-model="close_km" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
+                            </div>
+
+                            <div x-show="open_km || close_km" class="bg-blue-50 p-3 rounded-md border border-blue-100 mt-2">
+                                <p class="text-sm font-bold text-blue-800">Total KM: <span x-text="calculateTotalKM()"></span> KM</p>
                             </div>
 
                             <!-- Hour Tracking -->
@@ -132,12 +151,12 @@
                                         </div>
                                         <input type="hidden" name="open_hour" value="{{ $trip->open_hour }}">
                                     @else
-                                        <input type="number" step="0.01" name="open_hour" x-model="open_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                        <input type="number" min="0" step="0.01" name="open_hour" x-model="open_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
                                     @endif
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Close Hour</label>
-                                    <input type="number" step="0.01" name="close_hour" x-model="close_hour" value="{{ old('close_hour', $trip->close_hour) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" step="0.01" name="close_hour" x-model="close_hour" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
                             </div>
 
@@ -146,26 +165,43 @@
                             </div>
 
                             <!-- Financials -->
-                             <div>
-                                 <label class="block text-sm font-bold text-slate-700">Rent Amount (₹)</label>
-                                 @if($isVehicle)
-                                     <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-medium text-green-600">
-                                         ₹{{ number_format($trip->rent_amount, 2) }}
-                                     </div>
-                                     <input type="hidden" name="rent_amount" value="{{ $trip->rent_amount }}">
-                                 @else
-                                     <input type="number" step="0.01" name="rent_amount" value="{{ old('rent_amount', $trip->rent_amount) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-green-600">
-                                 @endif
-                             </div>
-
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                 <div>
+                                     <label class="block text-sm font-bold text-slate-700">Rent Amount (₹)</label>
+                                     @if($isVehicle)
+                                         <div class="mt-1 block w-full rounded-md border border-slate-200 text-sm bg-slate-50/50 px-3 py-2 text-slate-700 font-medium text-green-600">
+                                             ₹<span x-text="rent_amount"></span>
+                                         </div>
+                                         <input type="hidden" name="rent_amount" x-model="rent_amount">
+                                     @else
+                                         <input type="number" min="0" step="0.01" name="rent_amount" x-model="rent_amount" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-green-600">
+                                     @endif
+                                 </div>
+                                 <div>
+                                     <label class="block text-sm font-bold text-slate-700">Padi Kaasu (படி காசு)</label>
+                                     <input type="number" min="0" step="0.01" name="padi_kaasu" x-model="padi_kaasu" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm font-bold text-indigo-600">
+                                 </div>
+                            </div>
+                            
+                            <div x-show="rent_amount || padi_kaasu" class="bg-green-50 p-3 rounded-md border border-green-100 mt-2">
+                                <p class="text-sm font-bold text-green-800">Total Amount: ₹<span x-text="calculateTotalAmount()"></span></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                <div class="col-span-1 sm:col-span-2">
+                                    <label class="block text-sm font-bold text-slate-700">Work</label>
+                                    <input type="text" name="work" value="{{ old('work', $trip->work) }}" placeholder="Describe work" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Fuel (Litres)</label>
-                                    <input type="number" step="0.01" name="fuel_litre" x-model="fuel_litre" value="{{ old('fuel_litre', $trip->fuel_litre) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" step="0.01" name="fuel_litre" x-model="fuel_litre" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700">Diesel Price</label>
-                                    <input type="number" step="0.01" name="diesel_price" x-model="diesel_price" value="{{ old('diesel_price', $trip->diesel_price) }}" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
+                                    <input type="number" min="0" step="0.01" name="diesel_price" x-model="diesel_price" class="mt-1 block w-full rounded-md border-slate-200 text-sm shadow-sm bg-white focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-1 focus:ring-offset-0">
                                 </div>
                             </div>
 
@@ -253,6 +289,7 @@
             return {
                 isVehicle: {{ $isVehicle ? 'true' : 'false' }},
                 showModal: false,
+                trip_type: '{{ old('trip_type', $trip->trip_type) }}',
                 location: '{{ old('location', $trip->location) }}',
                 open_km: {{ old('open_km', $trip->open_km) ?: 0 }},
                 close_km: {{ old('close_km', $trip->close_km) ?: 0 }},
@@ -260,9 +297,21 @@
                 close_hour: '{{ old('close_hour', $trip->close_hour) }}',
                 fuel_litre: '{{ old('fuel_litre', $trip->fuel_litre) }}',
                 diesel_price: '{{ old('diesel_price', $trip->diesel_price) }}',
+                rent_amount: '{{ old('rent_amount', $trip->rent_amount) }}',
+                padi_kaasu: '{{ old('padi_kaasu', $trip->padi_kaasu) }}',
 
                 calculateHours() {
                     let total = (parseFloat(this.close_hour) || 0) - (parseFloat(this.open_hour) || 0);
+                    return total > 0 ? total.toFixed(2) : 0;
+                },
+
+                calculateTotalKM() {
+                    let total = (parseFloat(this.close_km) || 0) - (parseFloat(this.open_km) || 0);
+                    return total > 0 ? total.toFixed(2) : 0;
+                },
+
+                calculateTotalAmount() {
+                    let total = (parseFloat(this.rent_amount) || 0) + (parseFloat(this.padi_kaasu) || 0);
                     return total > 0 ? total.toFixed(2) : 0;
                 },
 

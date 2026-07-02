@@ -16,8 +16,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $recentLogins = \App\Models\LoginHistory::where('user_id', $request->user()->id)
+            ->latest('login_datetime')
+            ->take(5)
+            ->get();
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'recentLogins' => $recentLogins,
         ]);
     }
 

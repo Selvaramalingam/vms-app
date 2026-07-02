@@ -20,6 +20,11 @@ class LogSuccessfulLogin
     {
         $user = $event->user;
 
+        // Do not record Vehicle Login sessions
+        if ($user->hasRole('Vehicle')) {
+            return;
+        }
+
         // Store new login
         LoginHistory::create([
             'user_id' => $user->id,
